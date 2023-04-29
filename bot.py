@@ -23,8 +23,6 @@ bot = Bot(Config.BOT_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 previous_questions_and_answers = []
-whitelist = Config.ADMINLIST + Config.WHITELIST
-adminlist = Config.ADMINLIST
 instructions = Config.INSTRUCTIONS
 
 class AddUserToDB(BaseMiddleware):
@@ -33,7 +31,8 @@ class AddUserToDB(BaseMiddleware):
 
 class Whitelist(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
-        if message.from_user.id not in whitelist:
+        is_whitelisted = await read_whitelist(user_id=message.from_user.id)
+        if is_whitelisted != 1:
             await message.answer_chat_action('typing')
             sleep(1.66)
             await message.answer("I'm under development, and no one can access me, except my creator.")
@@ -44,12 +43,12 @@ class Whitelist(BaseMiddleware):
 
 class Adminlist(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
-        handler =  current_handler.get()
+        handler = current_handler.get()
         if handler:
             key = getattr(handler, 'key', None)
             if key == 'admin':
-                user_id = message.from_user.id
-                if user_id not in adminlist:
+                is_admin = await read_admin(user_id=message.from_user.id)
+                if is_admin != 1:
                     await message.answer_chat_action('typing')
                     sleep(1.66)
                     await message.answer('У тебя нет доступа к этой команде!')
@@ -93,7 +92,6 @@ async def whitelistadd_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['user_id'] = message.text
         data['is_whitelisted'] = 1
-        print(data)
     await edit_whitelist(state, user_id=message.text)
     await message.answer_chat_action('typing')
     sleep(1.66)
@@ -114,7 +112,6 @@ async def whitelistdel_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['user_id'] = message.text
         data['is_whitelisted'] = 0
-        print(data)
     await edit_whitelist(state, user_id=message.text)
     await message.answer_chat_action('typing')
     sleep(1.66)
@@ -135,7 +132,6 @@ async def adminadd_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['user_id'] = message.text
         data['is_admin'] = 1
-        print(data)
     await edit_admin(state, user_id=message.text)
     await message.answer_chat_action('typing')
     sleep(1.66)
@@ -156,7 +152,6 @@ async def admindel_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['user_id'] = message.text
         data['is_admin'] = 0
-        print(data)
     await edit_admin(state, user_id=message.text)
     await message.answer_chat_action('typing')
     sleep(1.66)

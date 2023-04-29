@@ -22,3 +22,20 @@ async def edit_whitelist(state, user_id):
     async with state.proxy() as data:
         cur.execute(f"UPDATE profile SET is_whitelisted = '{data['is_whitelisted']}' WHERE user_id == '{user_id}'")
         db.commit()
+
+async def edit_history(state, user_id):
+    async with state.proxy() as data:
+        cur.execute(f"UPDPATE profile SET history = '{data['history']}' WHERE user_id == '{user_id}'")
+        db.commit()
+
+async def read_admin(user_id):
+    cur.execute(f"SELECT is_admin FROM profile WHERE user_id = '{user_id}'")
+    result = cur.fetchone()
+    for res in result:
+        return res
+
+async def read_whitelist(user_id):
+    cur.execute(f"SELECT is_whitelisted FROM profile WHERE user_id = '{user_id}'")
+    result = cur.fetchone()
+    for res in result:
+        return res
