@@ -27,10 +27,11 @@ whitelist = Config.ADMINLIST + Config.WHITELIST
 adminlist = Config.ADMINLIST
 instructions = Config.INSTRUCTIONS
 
-class Whitelist(BaseMiddleware):
+class AddUserToDB(BaseMiddleware):
     async def on_pre_process_message(self, message: types.Message, data: dict):
         await create(user_id=message.from_user.id)
 
+class Whitelist(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
         if message.from_user.id not in whitelist:
             await message.answer_chat_action('typing')
@@ -42,8 +43,6 @@ class Whitelist(BaseMiddleware):
             raise CancelHandler()
 
 class Adminlist(BaseMiddleware):
-    async def on_pre_process_message(self, message: types.Message, data:dict):
-        await create(user_id=message.from_user.id)
     async def on_process_message(self, message: types.Message, data: dict):
         handler =  current_handler.get()
         if handler:
@@ -199,4 +198,5 @@ async def main(message: types.Message):
 if __name__ == '__main__':
     dp.middleware.setup(Whitelist())
     dp.middleware.setup(Adminlist())
+    dp.middleware.setup(AddUserToDB())
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
