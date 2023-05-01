@@ -30,6 +30,12 @@ async def edit_instructions(state, user_id):
     async with state.proxy() as data:
         await db.execute(f"UPDATE profile SET instructions = '{data['instructions']}' WHERE user_id = '{user_id}'")
 
+async def edit_history(history, user_id):
+    await db.execute(f"UPDATE profile SET history = '{history}' WHERE user_id = '{user_id}'")
+
+async def clean_history(user_id):
+    await db.execute(f"UPDATE profile SET history = '' WHERE user_id = '{user_id}'")
+
 async def read_admin(user_id):
     result = await db.fetchrow(f"SELECT is_admin FROM profile WHERE user_id = '{user_id}'")
     for res in result:
@@ -42,6 +48,11 @@ async def read_whitelist(user_id):
 
 async def read_instructions(user_id):
     result = await db.fetchrow(f"SELECT instructions FROM profile WHERE user_id = '{user_id}'")
+    for res in result:
+        return res
+
+async def read_history(user_id):
+    result = await db.fetchrow(f"SELECT history FROM profile WHERE user_id = '{user_id}'")
     for res in result:
         return res
 

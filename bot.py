@@ -9,49 +9,54 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 from asyncio import sleep
 from postgresql import *
 
+# Simple decorator for admin commands
 def set_key(key: str = None):
     def decorator(func):
         setattr(func, 'key', key)
         return func
     return decorator
 
+# Start connection with database
 async def on_startup(_):
     await start_db()
 
 bot = Bot(Config.BOT_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
-previous_questions_and_answers = []
 
+# Add user to database if he is not there
 class AddUserToDB(BaseMiddleware):
     async def on_pre_process_message(self, message: types.Message, data: dict):
-        await create(user_id=message.from_user.id)
+        await create(message.from_user.id)
 
+# Check if the user in whitelist or not
 class Whitelist(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
-        is_whitelisted = await read_whitelist(user_id=message.from_user.id)
+        is_whitelisted = await read_whitelist(message.from_user.id)
         if is_whitelisted != True:
             await message.answer_chat_action('typing')
             await sleep(1.66)
-            await message.answer("I'm under development, and no one can access me, except my creator.")
+            await message.answer("I'm sorry, but you're not on the whitelist.\n\nBut you can view the source code of me on [github](https://github.com/SuperSuslik312/python-ai-bot).", parse_mode=types.ParseMode.MARKDOWN)
             await message.answer_chat_action('choose_sticker')
             await sleep(1.33)
             await message.answer_sticker("CAACAgIAAxkBAAEIvA1kSHmXeLZRAu03uPm1k8TZ54xTbAACWUAAAuCjggc35LUFXNY5gC8E")
             raise CancelHandler()
 
+# Check if the user is admin or not
 class Adminlist(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
         handler = current_handler.get()
         if handler:
             key = getattr(handler, 'key', None)
             if key == 'admin':
-                is_admin = await read_admin(user_id=message.from_user.id)
+                is_admin = await read_admin(message.from_user.id)
                 if is_admin != True:
                     await message.answer_chat_action('typing')
                     await sleep(1.66)
                     await message.answer('У тебя нет доступа к этой команде!')
                     raise CancelHandler()
 
+# Temp storage
 class Profile(StatesGroup):
     is_admin = State()
     no_admin = State()
@@ -72,7 +77,7 @@ async def cancel(message: types.Message, state: FSMContext):
 # Start the conversation with bot
 @dp.message_handler(commands='start')
 async def start_bot(message: types.Message):
-    instructions = await read_instructions(user_id=message.from_user.id)
+    instructions = await read_instructions(message.from_user.id)
     await message.answer_chat_action('typing')
     response = start_conversation(instructions)
     await message.answer(response)
@@ -165,7 +170,7 @@ async def setprompt(message: types.Message):
 async def setprompt_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['instructions'] = message.text
-    await edit_instructions(state, user_id=message.from_user.id)
+    await edit_instructions(state, message.from_user.id)
     await message.answer_chat_action('typing')
     await sleep(1.66)
     await message.answer('Ты успешно задал мне поведение, спасибо!')
@@ -174,6 +179,7 @@ async def setprompt_finish(message: types.Message, state: FSMContext):
     await message.answer_sticker('CAACAgIAAxkBAAEIyFhkTaTnTzPFtQeYx4WaRUiYJglBnwACyj8AAuCjggcUTxrEwRdNXy8E')
     await state.finish()
 
+# Get the user ids from database that in whitelist !!! Not actually completed
 @dp.message_handler(commands='whitelistget')
 @set_key('admin')
 async def whitelistget(message: types.Message):
@@ -185,7 +191,7 @@ async def whitelistget(message: types.Message):
 # Clear the bot's memory
 @dp.message_handler(commands='clear')
 async def clear_history(message: types.Message):
-    previous_questions_and_answers.clear()
+    await clean_history(message.from_user.id)
     await message.answer_chat_action('typing')
     await sleep(1.66)
     await message.answer('Моя память успешно очищена, теперь я ничего не помню, ты доволен?')
@@ -197,11 +203,11 @@ async def clear_history(message: types.Message):
 @dp.message_handler()
 async def main(message: types.Message):
     try:
+        user_id = message.from_user.id
         await message.answer_chat_action('typing')
         new_question = message.text
-        instructions = await read_instructions(user_id=message.from_user.id)
-        response = update(instructions, previous_questions_and_answers, new_question)
-        previous_questions_and_answers.append((new_question, response))
+        instructions = await read_instructions(user_id)
+        response = await update(instructions, user_id, new_question)
         await message.answer(response)
     except Exception as e:
         print(e)

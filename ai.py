@@ -1,6 +1,7 @@
 import openai
-
+from postgresql import *
 from config import Config
+import json
 
 openai.api_key = Config.API_KEY
 max_questions = Config.MAX_CONTEXT_QUESTIONS
@@ -26,14 +27,18 @@ def start_conversation(instructions):
     )
     return completion['choices'][0]['message']['content']
 
-def update(instructions, previous_questions_and_answers, new_question):
+
+async def update(instructions, user_id, new_question):
     messages = [
-        { "role": "system", "content": instructions },
+        {"role": "system", "content": instructions},
     ]
 
+    history = await read_history(user_id)
+    previous_questions_and_answers = json.loads(history) if history else []
+
     for question, answer in previous_questions_and_answers[-max_questions:]:
-        messages.append({ "role": "user", "content": question })
-        messages.append({ "role": "assistant", "content": answer })
+        messages.append({"role": "user", "content": question})
+        messages.append({"role": "assistant", "content": answer})
     messages.append({"role": "user", "content": new_question})
 
     completion = openai.ChatCompletion.create(
@@ -45,4 +50,9 @@ def update(instructions, previous_questions_and_answers, new_question):
         frequency_penalty=frequency_penalty,
         presence_penalty=presence_penalty
     )
-    return completion['choices'][0]['message']['content']
+
+    response = completion['choices'][0]['message']['content']
+    previous_questions_and_answers.append((new_question, response))
+    history = json.dumps(previous_questions_and_answers)
+    await edit_history(history, user_id)
+    return response
