@@ -1,9 +1,8 @@
-import openai
+import g4f
 from postgresql import *
 from config import Config
 import json
 
-openai.api_key = Config.API_KEY
 max_questions = Config.MAX_CONTEXT_QUESTIONS
 max_tokens = Config.MAX_TOKENS
 temperature = Config.TEMPERATURE
@@ -16,7 +15,8 @@ def start_conversation(instructions):
         { "role": "user", "content": "Привет! Кто ты?" }
     ]
 
-    completion = openai.ChatCompletion.create(
+    completion = g4f.ChatCompletion.create(
+        provider=g4f.Provider.Theb,
         model="gpt-3.5-turbo",
         messages=messages,
         temperature=temperature,
@@ -41,7 +41,8 @@ async def update(instructions, user_id, new_question):
         messages.append({"role": "assistant", "content": answer})
     messages.append({"role": "user", "content": new_question})
 
-    completion = openai.ChatCompletion.create(
+    completion = g4f.ChatCompletion.create(
+        provider=g4f.Provider.Theb,
         model="gpt-3.5-turbo",
         messages=messages,
         temperature=temperature,
@@ -51,8 +52,8 @@ async def update(instructions, user_id, new_question):
         presence_penalty=presence_penalty
     )
 
-    response = completion['choices'][0]['message']['content']
-    previous_questions_and_answers.append((new_question, response))
+
+    previous_questions_and_answers.append((new_question, completion))
     history = json.dumps(previous_questions_and_answers)
     await edit_history(history, user_id)
-    return response
+    return completion

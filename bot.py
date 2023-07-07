@@ -219,7 +219,8 @@ async def main(message: types.Message):
         await message.answer_sticker("CAACAgIAAxkBAAEIvA9kSHs-b_bMbTJRFxkzFEFx8X5M5AACzz8AAuCjggd2g0I1aviuMS8E")
         await message.answer_chat_action('typing')
         await sleep(1.66)
-        await message.answer("Попробуй очистить мне память, или, если это не поможет, свяжись с @SuperSuslik312")
+        await message.answer("Попробуй очистить мне память, или, если это не поможет, свяжись с @SuperSuslik312 и перешли ему следующее сообщение:")
+        await message.answer(e)
 
 # Bot polling
 if __name__ == '__main__':
