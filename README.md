@@ -1,3 +1,4 @@
+# &#9888; DEVELOPMENT IS FROZEN
 # AI Telegram Bot
 ## What is it?
 * First of all, you can chat with GPT-3.5 model directly in telegram.
