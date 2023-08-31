@@ -16,7 +16,7 @@ $ python3 -u bot.py
 ## Dependecies
 * [aiogram](https://github.com/aiogram/aiogram)
 * [asyncpg](https://github.com/MagicStack/asyncpg)
-* All [gpt4free](https://github.com/xtekky/gpt4free) dependencies
+* [gpt4free](https://github.com/xtekky/gpt4free)
 # Licenses
 * This work - [GNU AGPL-3.0](LICENSE.md)
 * aiogram - MIT license
