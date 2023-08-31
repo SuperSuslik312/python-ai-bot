@@ -1,2 +1,3 @@
 aiogram
 asyncpg
+g4f

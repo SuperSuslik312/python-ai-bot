@@ -36,7 +36,7 @@ class Whitelist(BaseMiddleware):
         if is_whitelisted != True:
             await message.answer_chat_action('typing')
             await sleep(1.66)
-            await message.answer("I'm sorry, but you're not on the whitelist.\n\nBut you can view the source code of me on [github](https://github.com/SuperSuslik312/python-ai-bot).", parse_mode=types.ParseMode.MARKDOWN)
+            await message.answer("I'm sorry, but you're not on the whitelist.\n\nIf yout want to chat with me, you can contact my developer @SuperSuslik312 or deploy me yourself, source code is available [here](https://github.com/SuperSuslik312/python-ai-bot)", parse_mode=types.ParseMode.MARKDOWN)
             await message.answer_chat_action('choose_sticker')
             await sleep(1.33)
             await message.answer_sticker("CAACAgIAAxkBAAEIvA1kSHmXeLZRAu03uPm1k8TZ54xTbAACWUAAAuCjggc35LUFXNY5gC8E")
