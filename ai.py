@@ -24,7 +24,7 @@ def start_conversation(instructions):
         frequency_penalty=frequency_penalty,
         presence_penalty=presence_penalty
     )
-    return completion['choices'][0]['message']['content']
+    return completion
 
 
 async def update(instructions, user_id, new_question):
