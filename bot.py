@@ -208,7 +208,7 @@ async def main(message: types.Message):
         new_question = message.text
         instructions = await read_instructions(user_id)
         response = await update(instructions, user_id, new_question)
-        await message.answer(response)
+        await message.answer(response, parse_mode=types.ParseMode.MARKDOWN)
     except Exception as e:
         print(e)
         await message.answer_chat_action('typing')
