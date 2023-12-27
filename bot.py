@@ -179,6 +179,14 @@ async def setprompt_finish(message: types.Message, state: FSMContext):
     await message.answer_sticker('CAACAgIAAxkBAAEIyFhkTaTnTzPFtQeYx4WaRUiYJglBnwACyj8AAuCjggcUTxrEwRdNXy8E')
     await state.finish()
 
+# Reset system prompt to default
+@dp.message_handler(commands='resetprompt')
+async def resetprompt(message: types.Message):
+    await reset_instructions(message.from_user.id)
+    await message.answer_chat_action('typing')
+    await sleep(1.66)
+    await message.answer('Мои настройки сброшены до заводских!')
+
 # Get the user ids from database that in whitelist !!! Not actually completed
 @dp.message_handler(commands='whitelistget')
 @set_key('admin')

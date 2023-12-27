@@ -32,6 +32,9 @@ async def edit_instructions(state, user_id):
     async with state.proxy() as data:
         await db.execute(f"UPDATE profile SET instructions = '{data['instructions']}' WHERE user_id = '{user_id}'")
 
+async def reset_instructions(user_id):
+    await db.execute(f"UPDATE profile SET instructions = '{instructions}' WHERE user_id = '{user_id}'")
+
 async def edit_history(history, user_id):
     await db.execute(f"UPDATE profile SET history = '{history}' WHERE user_id = '{user_id}'")
 
