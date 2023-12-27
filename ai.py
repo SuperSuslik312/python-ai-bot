@@ -16,7 +16,8 @@ def start_conversation(instructions):
     ]
 
     completion = g4f.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        provider=g4f.Provider.GeekGpt,
+        model=g4f.models.gpt_4,
         messages=messages,
         temperature=temperature,
         max_tokens=max_tokens,
@@ -41,7 +42,8 @@ async def update(instructions, user_id, new_question):
     messages.append({"role": "user", "content": new_question})
 
     completion = g4f.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        provider=g4f.Provider.GeekGpt,
+        model=g4f.models.gpt_4,
         messages=messages,
         temperature=temperature,
         max_tokens=max_tokens,
