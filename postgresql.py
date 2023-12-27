@@ -19,10 +19,12 @@ async def create(user_id):
         await db.execute(f"INSERT INTO profile VALUES('{user_id}', False, False, '{instructions}', '')")
 
 async def edit_admin(state, user_id):
+    await create(user_id)
     async with state.proxy() as data:
         await db.execute(f"UPDATE profile SET is_admin = '{data['is_admin']}' WHERE user_id = '{user_id}'")
 
 async def edit_whitelist(state, user_id):
+    await create(user_id)
     async with state.proxy() as data:
         await db.execute(f"UPDATE profile SET is_whitelisted = '{data['is_whitelisted']}' WHERE user_id = '{user_id}'")
 
