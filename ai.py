@@ -9,15 +9,16 @@ temperature = Config.TEMPERATURE
 frequency_penalty = Config.FREQUENCY_PENALTY
 presence_penalty = Config.PRESENCE_PENALTY
 
-def start_conversation(instructions):
+
+async def start_conversation(instructions):
     messages = [
-        { "role": "system", "content": instructions },
-        { "role": "user", "content": "Привет! Кто ты?" }
+        {"role": "system", "content": instructions},
+        {"role": "user", "content": "Привет! Кто ты?"}
     ]
 
     completion = g4f.ChatCompletion.create(
         provider=g4f.Provider.GeekGpt,
-        model=g4f.models.gpt_4,
+        model=g4f.models.gpt_4_32k,
         messages=messages,
         temperature=temperature,
         max_tokens=max_tokens,
@@ -43,7 +44,7 @@ async def update(instructions, user_id, new_question):
 
     completion = g4f.ChatCompletion.create(
         provider=g4f.Provider.GeekGpt,
-        model=g4f.models.gpt_4,
+        model=g4f.models.gpt_4_32k,
         messages=messages,
         temperature=temperature,
         max_tokens=max_tokens,
@@ -51,7 +52,6 @@ async def update(instructions, user_id, new_question):
         frequency_penalty=frequency_penalty,
         presence_penalty=presence_penalty
     )
-
 
     previous_questions_and_answers.append((new_question, completion))
     history = json.dumps(previous_questions_and_answers)
