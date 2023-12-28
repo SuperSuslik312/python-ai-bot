@@ -9,6 +9,8 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 from asyncio import sleep
 from postgresql import *
 
+from keyboard import ikb, ikbc
+
 # Simple decorator for admin commands
 def set_key(key: str = None):
     def decorator(func):
@@ -82,14 +84,36 @@ async def start_bot(message: types.Message):
     response = start_conversation(instructions)
     await message.answer(response)
 
-# Add some user to whitelist
-@dp.message_handler(commands='whitelistadd')
+@dp.message_handler(commands='admin')
 @set_key('admin')
-async def whitelistadd(message: types.Message):
-    await message.answer_chat_action('typing')
-    await sleep(1.66)
-    await message.answer('Введи айди пользователя, которого хочешь добавить в вайтлист.')
-    await Profile.is_whitelisted.set()
+async def admin_ikb(message: types.Message):
+    await message.answer(text='Добро пожаловать, админ',
+                         reply_markup=ikb)
+
+@dp.callback_query_handler(state='*')
+async def admin_callback(callback: types.CallbackQuery, state: FSMContext):
+    if callback.data == 'add_whitelist':
+        await callback.message.edit_text(text="Введи айди пользователя, которого хочешь добавить в вайтлист.",
+                                         reply_markup=ikbc)
+        await Profile.is_whitelisted.set()
+    elif callback.data == 'del_whitelist':
+        await callback.message.edit_text(text="Введи айди пользователя, которого хочешь удалить из вайтлиста.",
+                                         reply_markup=ikbc)
+        await Profile.no_whitelisted.set()
+    elif callback.data == 'add_admin':
+        await callback.message.edit_text(text="Введи айди пользователя, которого хочешь сделать админом.",
+                                         reply_markup=ikbc)
+        await Profile.is_admin.set()
+    elif callback.data == 'del_admin':
+        await callback.message.edit_text(text="Введи айди пользователя, у которого хочешь забрать права админа.",
+                                         reply_markup=ikbc)
+        await Profile.no_admin.set()
+    elif callback.data == 'cancel':
+        await callback.message.edit_text(text="Предыдущее действие отменено!\nВыбери другое",
+                                         reply_markup=ikb)
+        await state.finish()
+    elif callback.data == 'cancel_panel':
+        await callback.message.delete()
 
 @dp.message_handler(state=Profile.is_whitelisted)
 async def whitelistadd_finish(message: types.Message, state: FSMContext):
@@ -101,15 +125,6 @@ async def whitelistadd_finish(message: types.Message, state: FSMContext):
     await message.reply('Пользователь успешно добавлен в вайтлист!')
     await state.finish()
 
-# Delete some user from whitelist
-@dp.message_handler(commands='whitelistdel')
-@set_key('admin')
-async def whitelistdel(message: types.Message):
-    await message.answer_chat_action('typing')
-    await sleep(1.66)
-    await message.answer('Введи айди пользователя, которого хочешь удалить из вайтлиста.')
-    await Profile.no_whitelisted.set()
-
 @dp.message_handler(state=Profile.no_whitelisted)
 async def whitelistdel_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -120,15 +135,6 @@ async def whitelistdel_finish(message: types.Message, state: FSMContext):
     await message.reply('Пользователь успешно удалён из вайтлиста!')
     await state.finish()
 
-# Add some user to adminlist
-@dp.message_handler(commands='adminadd')
-@set_key('admin')
-async def adminadd(message: types.Message):
-    await message.answer_chat_action('typing')
-    await sleep(1.66)
-    await message.answer('Введи айди пользователя, которого хочешь сделать админом.')
-    await Profile.is_admin.set()
-
 @dp.message_handler(state=Profile.is_admin)
 async def adminadd_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -138,15 +144,6 @@ async def adminadd_finish(message: types.Message, state: FSMContext):
     await sleep(1.66)
     await message.reply('Пользователь успешно получил права админа!')
     await state.finish()
-
-# Delete some user from adminlist
-@dp.message_handler(commands='admindel')
-@set_key('admin')
-async def admindel(message: types.Message):
-    await message.answer_chat_action('typing')
-    await sleep(1.66)
-    await message.answer('Введи айди пользователя, у которого хочешь забрать права админа.')
-    await Profile.no_admin.set()
 
 @dp.message_handler(state=Profile.no_admin)
 async def admindel_finish(message: types.Message, state: FSMContext):
