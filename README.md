@@ -1,9 +1,9 @@
 # AI Telegram Bot
 ## What is it?
-* First of all, you can chat with GPT-3.5 model directly in telegram.
-* All history of conversation with GPT-3.5 entered into database for each user separatly.
+* First of all, you can chat with GPT-4 model directly in telegram.
+* All history of conversation with GPT-4 entered into database for each user separatly.
 * If user want, he could clear the history of conversation with special command.
-* Also this bot allows you to change the GPT-3.5 prompt without leaving the chat with him, right in the telegram, for each user separatly.
+* Also this bot allows you to change the GPT-4 prompt without leaving the chat with him, right in the telegram, for each user separatly.
 * In addition, it is possible to add/remove people to the white list or admin list, using the same bot.
 ## How to start?
 1. First of all you need to install dependecies from [requirements.txt](requirements.txt) and [gpt4free/requirements.txt](gpt4free/requirements.txt)
