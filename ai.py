@@ -16,15 +16,10 @@ async def start_conversation(instructions):
         {"role": "user", "content": "Привет! Кто ты?"}
     ]
 
-    completion = g4f.ChatCompletion.create(
+    completion = await g4f.ChatCompletion.create_async(
         provider=g4f.Provider.GeekGpt,
         model=g4f.models.gpt_4_32k,
-        messages=messages,
-        temperature=temperature,
-        max_tokens=max_tokens,
-        top_p=1.0,
-        frequency_penalty=frequency_penalty,
-        presence_penalty=presence_penalty
+        messages=messages
     )
     return completion
 
@@ -42,15 +37,10 @@ async def update(instructions, user_id, new_question):
         messages.append({"role": "assistant", "content": answer})
     messages.append({"role": "user", "content": new_question})
 
-    completion = g4f.ChatCompletion.create(
+    completion = await g4f.ChatCompletion.create_async(
         provider=g4f.Provider.GeekGpt,
         model=g4f.models.gpt_4_32k,
-        messages=messages,
-        temperature=temperature,
-        max_tokens=max_tokens,
-        top_p=1.0,
-        frequency_penalty=frequency_penalty,
-        presence_penalty=presence_penalty
+        messages=messages
     )
 
     previous_questions_and_answers.append((new_question, completion))
