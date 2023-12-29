@@ -17,14 +17,15 @@ async def start_conversation(instructions):
     ]
 
     completion = await g4f.ChatCompletion.create_async(
-        provider=g4f.Provider.GeekGpt,
+        provider=g4f.Provider.Bing,
         model=g4f.models.gpt_4_32k,
-        messages=messages
+        messages=messages,
+        stream=False
     )
     return completion
 
 
-async def update(instructions, user_id, new_question):
+async def update(instructions, user_id, new_question, photo):
     messages = [
         {"role": "system", "content": instructions},
     ]
@@ -38,9 +39,11 @@ async def update(instructions, user_id, new_question):
     messages.append({"role": "user", "content": new_question})
 
     completion = await g4f.ChatCompletion.create_async(
-        provider=g4f.Provider.GeekGpt,
+        provider=g4f.Provider.Bing,
         model=g4f.models.gpt_4_32k,
-        messages=messages
+        messages=messages,
+        stream=False,
+        image=photo
     )
 
     previous_questions_and_answers.append((new_question, completion))

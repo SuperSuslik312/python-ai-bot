@@ -1,3 +1,5 @@
+import base64
+
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.handler import CancelHandler, current_handler
 
@@ -10,7 +12,6 @@ from asyncio import sleep
 from postgresql import *
 
 from keyboards import ikb_admin, ikb_user, ikb_cancel_admin, ikb_cancel_user, ikb_confirm_his, ikb_confirm_ins
-
 
 # Simple decorator for admin commands
 def set_key(key: str = None):
@@ -223,15 +224,24 @@ async def whitelistget(message: types.Message):
 
 
 # Chatting with GPT-3.5
-@dp.message_handler()
+@dp.message_handler(content_types=['text', 'photo'])
 async def main(message: types.Message):
     try:
         user_id = message.from_user.id
         await message.answer_chat_action('typing')
-        new_question = message.text
+        new_question = message.caption if message.caption else message.text
         instructions = await read_instructions(user_id)
-        response = await update(instructions, user_id, new_question)
-        await message.answer(response, parse_mode=types.ParseMode.MARKDOWN)
+        if message.photo:
+            photo = await bot.get_file(message.photo[-1].file_id)
+            photo_stream = await bot.download_file(photo.file_path)
+            photo_bytes = photo_stream.getvalue()
+            photo_base64 = base64.b64encode(photo_bytes).decode()
+            photo_uri = f"data:image/jpeg;base64,{photo_base64}"
+            response = await update(instructions, user_id, new_question, photo_uri)
+            await message.answer(response, parse_mode=types.ParseMode.MARKDOWN)
+        elif message.text:
+            response = await update(instructions, user_id, new_question, None)
+            await message.answer(response, parse_mode=types.ParseMode.MARKDOWN)
     except Exception as e:
         print(e)
         await message.answer_chat_action('typing')
