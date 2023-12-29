@@ -9,7 +9,7 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 from asyncio import sleep
 from postgresql import *
 
-from keyboards import ikb_admin, ikb_user, ikb_cancel_admin, ikb_cancel_user
+from keyboards import ikb_admin, ikb_user, ikb_cancel_admin, ikb_cancel_user, ikb_confirm_his, ikb_confirm_ins
 
 
 # Simple decorator for admin commands
@@ -125,8 +125,11 @@ async def admin_callback_handler(callback: types.CallbackQuery, state: FSMContex
         await callback.message.edit_text(text="Предыдущее действие отменено!\nВыбери другое",
                                          reply_markup=ikb_admin)
     elif callback.data == 'clear':
+        await callback.message.edit_text(text="Ты уверен? Пожалуйста не надо, я же всё забуду😭",
+                                         reply_markup=ikb_confirm_his)
+    elif callback.data == 'confirm_his':
         await clean_history(callback.from_user.id)
-        await callback.message.edit_text(text="Ты стёр мне память, зачем ты так со мной?😭",
+        await callback.message.edit_text(text="Ты стёр мне память, за что ты так со мной?😢",
                                          reply_markup=ikb_cancel_user)
     elif callback.data == 'set_prompt':
         await callback.message.edit_text(text='Напиши в следующем сообщении что ты от меня хочешь!\n\nНапример если '
@@ -137,10 +140,13 @@ async def admin_callback_handler(callback: types.CallbackQuery, state: FSMContex
                                          reply_markup=ikb_cancel_user)
         await Profile.instructions.set()
     elif callback.data == 'reset_prompt':
+        await callback.message.edit_text(text="Ты уверен в своём решении?",
+                                         reply_markup=ikb_confirm_ins)
+    elif callback.data == 'confirm_ins':
         await reset_instructions(callback.from_user.id)
         await callback.message.edit_text(text="Моё поведение сброшено до заводского, не знаю, радоваться или плакать...",
                                          reply_markup=ikb_cancel_user)
-    elif callback.data == 'cancel_user':
+    elif callback.data == 'cancel_user' or callback.data == 'no_confirm_his' or callback.data == 'no_confirm_ins':
         await state.finish()
         await callback.message.edit_text(text="Выбери действие, ня",
                                          reply_markup=ikb_user)

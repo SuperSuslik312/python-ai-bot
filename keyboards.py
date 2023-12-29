@@ -24,7 +24,7 @@ ib_cancel_user = InlineKeyboardButton(text="Назад",
                                       callback_data="cancel_user")
 ikb_cancel_user.add(ib_cancel_user)
 
-ikb_user = InlineKeyboardMarkup(row_width=3)
+ikb_user = InlineKeyboardMarkup(row_width=4)
 ib_user1 = InlineKeyboardButton(text="Стереть мне память(",
                                 callback_data="clear")
 ib_user2 = InlineKeyboardButton(text="Задать моё поведение",
@@ -32,3 +32,17 @@ ib_user2 = InlineKeyboardButton(text="Задать моё поведение",
 ib_user3 = InlineKeyboardButton(text="Сбросить моё поведение до заводского",
                                 callback_data='reset_prompt')
 ikb_user.add(ib_user1).add(ib_user2).add(ib_user3).add(ib_cancel)
+
+ikb_confirm_his = InlineKeyboardMarkup(row_width=2)
+ib_confirm_his1 = InlineKeyboardButton(text="Да! Иди в жопу",
+                                       callback_data="confirm_his")
+ib_confirm_his2 = InlineKeyboardButton(text="Нет, прости...",
+                                       callback_data="no_confirm_his")
+ikb_confirm_his.add(ib_confirm_his1, ib_confirm_his2)
+
+ikb_confirm_ins = InlineKeyboardMarkup(row_width=2)
+ib_confirm_ins1 = InlineKeyboardButton(text="Да!",
+                                       callback_data="confirm_ins")
+ib_confirm_ins2 = InlineKeyboardButton(text="Нет...",
+                                       callback_data="no_confirm_ins")
+ikb_confirm_ins.add(ib_confirm_ins1, ib_confirm_ins2)
