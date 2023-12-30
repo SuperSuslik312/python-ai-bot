@@ -159,7 +159,7 @@ async def admin_callback_handler(callback: types.CallbackQuery, state: FSMContex
 async def whitelistadd_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['is_whitelisted'] = True
-    await edit_whitelist(state, user_id=message.text)
+    await edit_whitelist(state, user_id=int(message.text))
     await message.answer_chat_action('typing')
     await sleep(1.66)
     await message.reply('Пользователь успешно добавлен в вайтлист!')
@@ -170,7 +170,7 @@ async def whitelistadd_finish(message: types.Message, state: FSMContext):
 async def whitelistdel_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['is_whitelisted'] = False
-    await edit_whitelist(state, user_id=message.text)
+    await edit_whitelist(state, user_id=int(message.text))
     await message.answer_chat_action('typing')
     await sleep(1.66)
     await message.reply('Пользователь успешно удалён из вайтлиста!')
@@ -181,7 +181,7 @@ async def whitelistdel_finish(message: types.Message, state: FSMContext):
 async def adminadd_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['is_admin'] = True
-    await edit_admin(state, user_id=message.text)
+    await edit_admin(state, user_id=int(message.text))
     await message.answer_chat_action('typing')
     await sleep(1.66)
     await message.reply('Пользователь успешно получил права админа!')
@@ -192,7 +192,7 @@ async def adminadd_finish(message: types.Message, state: FSMContext):
 async def admindel_finish(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['is_admin'] = False
-    await edit_admin(state, user_id=message.text)
+    await edit_admin(state, user_id=int(message.text))
     await message.answer_chat_action('typing')
     await sleep(1.66)
     await message.reply('У пользователя успешно отобраны права админа!')
