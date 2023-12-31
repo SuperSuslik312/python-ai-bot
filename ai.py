@@ -1,13 +1,12 @@
 import g4f
-from postgresql import *
+from postgresql import (
+    read_history,
+    edit_history
+)
 from config import Config
 import json
 
 max_questions = Config.MAX_CONTEXT_QUESTIONS
-max_tokens = Config.MAX_TOKENS
-temperature = Config.TEMPERATURE
-frequency_penalty = Config.FREQUENCY_PENALTY
-presence_penalty = Config.PRESENCE_PENALTY
 
 
 async def start_conversation(instructions):

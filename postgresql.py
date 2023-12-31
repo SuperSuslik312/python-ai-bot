@@ -2,7 +2,7 @@ import asyncpg
 from config import Config
 
 database = Config.DB_NAME
-user = Config.DB_USER
+db_user = Config.DB_USER
 password = Config.DB_PASS
 host = Config.DB_HOST
 port = Config.DB_PORT
@@ -11,7 +11,7 @@ instructions = Config.INSTRUCTIONS
 
 async def start_db():
     global db
-    db = await asyncpg.connect(database=database, user=user, password=password, host=host, port=port)
+    db = await asyncpg.connect(database=database, user=db_user, password=password, host=host, port=port)
     await db.execute("CREATE TABLE IF NOT EXISTS profile(user_id INTEGER PRIMARY KEY, is_admin BOOL NOT NULL, is_whitelisted BOOL NOT NULL, instructions TEXT, history JSONB)")
 
 
@@ -23,19 +23,19 @@ async def create(user_id):
 
 async def edit_admin(state, user_id):
     await create(user_id)
-    async with state.proxy() as data:
-        await db.execute(f"UPDATE profile SET is_admin = $1 WHERE user_id = $2", data['is_admin'], user_id)
+    data = await state.get_data()
+    await db.execute(f"UPDATE profile SET is_admin = $1 WHERE user_id = $2", data['is_admin'], user_id)
 
 
 async def edit_whitelist(state, user_id):
     await create(user_id)
-    async with state.proxy() as data:
-        await db.execute("UPDATE profile SET is_whitelisted = $1 WHERE user_id = $2", data['is_whitelisted'], user_id)
+    data = await state.get_data()
+    await db.execute("UPDATE profile SET is_whitelisted = $1 WHERE user_id = $2", data['is_whitelisted'], user_id)
 
 
 async def edit_instructions(state, user_id):
-    async with state.proxy() as data:
-        await db.execute("UPDATE profile SET instructions = $1 WHERE user_id = $2", data['isntructions'], user_id)
+    data = await state.get_data()
+    await db.execute("UPDATE profile SET instructions = $1 WHERE user_id = $2", data['isntructions'], user_id)
 
 
 async def reset_instructions(user_id):

@@ -1,48 +1,65 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
 
-ib_cancel = InlineKeyboardButton(text="Закрыть",
-                                 callback_data="cancel_panel")
 
-ikb_admin = InlineKeyboardMarkup(row_width=5)
-ib_admin1 = InlineKeyboardButton(text="Добавить пользователя в вайтлист",
-                                 callback_data="add_whitelist")
-ib_admin2 = InlineKeyboardButton(text="Удалить пользователя из вайтлиста",
-                                 callback_data="del_whitelist")
-ib_admin3 = InlineKeyboardButton(text="Сделать пользователя админом",
-                                 callback_data="add_admin")
-ib_admin4 = InlineKeyboardButton(text="Отобрать права админа у пользователя",
-                                 callback_data="del_admin")
-ikb_admin.add(ib_admin1).add(ib_admin2).add(ib_admin3).add(ib_admin4).add(ib_cancel)
+def admin_keyboard():
+    buttons = [
+        [InlineKeyboardButton(text="Добавить пользователя в вайтлист", callback_data="admin_add-whitelist")],
+        [InlineKeyboardButton(text="Удалить пользователя из вайтлиста", callback_data="admin_del-whitelist")],
+        [InlineKeyboardButton(text="Сделать пользователя админом", callback_data="admin_add-admin")],
+        [InlineKeyboardButton(text="Отобрать права админа у пользователя", callback_data="admin_del-admin")],
+        [InlineKeyboardButton(text="Закрыть", callback_data="admin_cancel-panel")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
 
-ikb_cancel_admin = InlineKeyboardMarkup(row_width=1)
-ib_cancel_admin = InlineKeyboardButton(text="Отмена",
-                                       callback_data="cancel_admin")
-ikb_cancel_admin.add(ib_cancel_admin)
 
-ikb_cancel_user = InlineKeyboardMarkup(row_width=1)
-ib_cancel_user = InlineKeyboardButton(text="Назад",
-                                      callback_data="cancel_user")
-ikb_cancel_user.add(ib_cancel_user)
+def admin_keyboard_cancel():
+    buttons = [
+        [InlineKeyboardButton(text="Отмена", callback_data="admin_cancel")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
 
-ikb_user = InlineKeyboardMarkup(row_width=4)
-ib_user1 = InlineKeyboardButton(text="Стереть мне память(",
-                                callback_data="clear")
-ib_user2 = InlineKeyboardButton(text="Задать моё поведение",
-                                callback_data="set_prompt")
-ib_user3 = InlineKeyboardButton(text="Сбросить моё поведение до заводского",
-                                callback_data='reset_prompt')
-ikb_user.add(ib_user1).add(ib_user2).add(ib_user3).add(ib_cancel)
 
-ikb_confirm_his = InlineKeyboardMarkup(row_width=2)
-ib_confirm_his1 = InlineKeyboardButton(text="Да! Иди в жопу",
-                                       callback_data="confirm_his")
-ib_confirm_his2 = InlineKeyboardButton(text="Нет, прости...",
-                                       callback_data="no_confirm_his")
-ikb_confirm_his.add(ib_confirm_his1, ib_confirm_his2)
+def user_keyboard():
+    buttons = [
+        [InlineKeyboardButton(text="Стереть мне память(", callback_data="user_clear")],
+        [InlineKeyboardButton(text="Задать моё поведение", callback_data="user_set-prompt")],
+        [InlineKeyboardButton(text="Сбросить моё поведение до заводского", callback_data='user_reset-prompt')],
+        [InlineKeyboardButton(text="Закрыть", callback_data="user_cancel-panel")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
 
-ikb_confirm_ins = InlineKeyboardMarkup(row_width=2)
-ib_confirm_ins1 = InlineKeyboardButton(text="Да!",
-                                       callback_data="confirm_ins")
-ib_confirm_ins2 = InlineKeyboardButton(text="Нет...",
-                                       callback_data="no_confirm_ins")
-ikb_confirm_ins.add(ib_confirm_ins1, ib_confirm_ins2)
+
+def user_keyboard_foolproof_his():
+    buttons = [
+        [
+            InlineKeyboardButton(text="Да! Иди в жопу", callback_data="user_confirm-his"),
+            InlineKeyboardButton(text="Нет, прости...", callback_data="user_no-confirm-his")
+        ]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def user_keyboard_foolproof_ins():
+    buttons = [
+        [
+            InlineKeyboardButton(text="Да!", callback_data="user_confirm-ins"),
+            InlineKeyboardButton(text="Нет...", callback_data="user_no-confirm-ins")
+        ]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+
+def user_keyboard_cancel():
+    buttons = [
+        [InlineKeyboardButton(text="Назад", callback_data="user_cancel")]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
