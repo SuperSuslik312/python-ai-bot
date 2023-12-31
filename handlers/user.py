@@ -24,6 +24,12 @@ from middlewares import (
     Whitelist
 )
 from keyboards import *
+from postgresql import (
+    clean_history,
+    reset_instructions,
+    edit_instructions,
+    read_instructions
+)
 
 bot = Bot(Config.BOT_TOKEN)
 router = Router()
