@@ -35,7 +35,7 @@ async def edit_whitelist(state, user_id):
 
 async def edit_instructions(state, user_id):
     data = await state.get_data()
-    await db.execute("UPDATE profile SET instructions = $1 WHERE user_id = $2", data['isntructions'], user_id)
+    await db.execute("UPDATE profile SET instructions = $1 WHERE user_id = $2", data['instructions'], user_id)
 
 
 async def reset_instructions(user_id):
