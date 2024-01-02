@@ -13,7 +13,7 @@ admin_id = Config.ADMIN_ID
 async def start_db():
     global db
     db = await asyncpg.connect(database=database, user=db_user, password=password, host=host, port=port)
-    await db.execute("CREATE TABLE IF NOT EXISTS profile(user_id INTEGER PRIMARY KEY, is_admin BOOL NOT NULL, is_whitelisted BOOL NOT NULL, instructions TEXT, history JSONB)")
+    await db.execute("CREATE TABLE IF NOT EXISTS profile(user_id BIGINT PRIMARY KEY, is_admin BOOL NOT NULL, is_whitelisted BOOL NOT NULL, instructions TEXT, history JSONB)")
 
 
 async def create(user_id):
