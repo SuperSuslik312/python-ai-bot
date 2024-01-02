@@ -7,6 +7,7 @@ password = Config.DB_PASS
 host = Config.DB_HOST
 port = Config.DB_PORT
 instructions = Config.INSTRUCTIONS
+admin_id = Config.ADMIN_ID
 
 
 async def start_db():
@@ -17,7 +18,9 @@ async def start_db():
 
 async def create(user_id):
     user = await db.fetch("SELECT 1 FROM profile WHERE user_id = $1", user_id)
-    if not user:
+    if not user and user_id == admin_id:
+        await db.execute("INSERT INTO profile VALUES($1, True, True, $2, NULL)", user_id, instructions)
+    elif not user:
         await db.execute("INSERT INTO profile VALUES($1, False, False, $2, NULL)", user_id, instructions)
 
 
